@@ -1,70 +1,264 @@
-# Getting Started with Create React App
+---
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 📘 Mock Test System
 
-## Available Scripts
+A full-stack web application that allows **teachers to create and schedule tests** and **students to take tests online**, with **automatic scoring**, **class-based test distribution**, and **teacher feedback**.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+# 🚀 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 👨‍🏫 **Teacher Features**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* Teacher login
+* Schedule a test for a **specific class (Dept / Year / Section)**
+* Add questions manually or upload from JSON
+* View all scheduled tests
+* View student submissions
+* Give feedback to students
+* Automatically calculates scores
+* Results overview
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 👨‍🎓 **Student Features**
 
-### `npm run build`
+* Student login
+* Students are mapped to **class & section** in DB
+* Students can only see tests assigned to their class
+* Clean test interface with MCQs
+* Auto-calculated score on submission
+* View all previous results
+* Read teacher feedback
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 🏗️ Tech Stack
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **Frontend**
 
-### `npm run eject`
+* React.js
+* Tailwind CSS
+* Fetch API for backend communication
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### **Backend**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* Python Flask
+* Flask-CORS
+* REST APIs
+* Auto scoring logic
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### **Database**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+* MySQL
+* Tables:
 
-## Learn More
+  * teachers
+  * students
+  * classes
+  * tests
+  * questions
+  * results
+  * answers
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# 📂 Project Structure
 
-### Code Splitting
+```
+/project-root
+ ├── frontend/        → React app
+ ├── backend/         → Flask app
+ │    ├── app.py
+ │    └── ...
+ ├── README.md
+ └── ...
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+# 🔧 Backend Setup (Flask)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 1. Create virtual environment
 
-### Making a Progressive Web App
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate  # Windows
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 2. Install dependencies
 
-### Advanced Configuration
+```bash
+pip install flask flask-cors mysql-connector-python
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 3. Update database credentials in `app.py`
 
-### Deployment
+```python
+host="localhost"
+user="root"
+password="YOUR_PASSWORD"
+database="mock_test_db"
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 4. Run backend
 
-### `npm run build` fails to minify
+```bash
+python app.py
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Backend will run at:
+
+```
+http://localhost:5000
+```
+
+---
+
+# 🎨 Frontend Setup (React)
+
+### 1. Install packages
+
+```bash
+cd frontend
+npm install
+```
+
+### 2. Start React app
+
+```bash
+npm start
+```
+
+Frontend runs at:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🗄️ MySQL Tables
+
+Your database must contain:
+
+### **classes**
+
+```
+id | department | year | section
+```
+
+### **teachers**
+
+```
+id | name | email | password_hash
+```
+
+### **students**
+
+```
+id | name | reg_num | password_hash | class_id (FK)
+```
+
+### **tests**
+
+```
+id | subject | scheduled_datetime | duration_minutes | status | class_id | created_by
+```
+
+### **questions**
+
+```
+id | test_id | question_text | choice_0..choice_3 | correct_index | score
+```
+
+### **results**
+
+```
+id | student_id | test_id | score | total_score | submitted_at | feedback | sent
+```
+
+### **answers**
+
+```
+id | result_id | question_id | selected_index
+```
+
+---
+
+# 📡 API Endpoints (Main)
+
+### Auth
+
+| Method | Endpoint     | Description           |
+| ------ | ------------ | --------------------- |
+| POST   | `/api/login` | Teacher/Student login |
+
+### Classes
+
+| GET | `/api/classes` | List all classes |
+
+### Tests
+
+| POST | `/api/tests` | Create test |
+| GET  | `/api/tests/teacher/:id` | Tests created by teacher |
+| GET  | `/api/tests/student/:id` | Tests available for student |
+| GET  | `/api/tests/:testId` | Test details + questions |
+| POST | `/api/tests/:testId/submit` | Student submits answers |
+
+### Results
+
+| GET | `/api/results/test/:id` | Teacher view results |
+| GET | `/api/results/student/:id` | Student view results |
+| POST | `/api/results/:resultId/feedback` | Teacher gives feedback |
+
+---
+
+# 📥 Import Sample Questions (JSON)
+
+Example JSON format:
+
+```json
+{
+  "questions": [
+    {
+      "question": "What is 2 + 2?",
+      "choices": ["3","4","5","6"],
+      "correctAnswer": 1,
+      "score": 5
+    }
+  ]
+}
+```
+
+Teachers can upload this file in the frontend.
+
+---
+
+# 📌 Roadmap (Future Enhancements)
+
+* JWT Authentication
+* Timer for tests
+* Auto-save answers
+* Admin dashboard
+* Bulk student upload
+* PDF export of results
+* Image-based questions support
+
+---
+
+# 🙌 Credits
+
+Developed by **Ramya K N**
+Tech Stack: React + Flask + MySQL
+
+---
+
+# 📄 License
+
+This project is open-source and available under the MIT License.
+
+---
+
+
